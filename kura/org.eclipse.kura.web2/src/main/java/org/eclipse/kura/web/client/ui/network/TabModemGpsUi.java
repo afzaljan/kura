@@ -42,8 +42,9 @@ public class TabModemGpsUi extends Composite implements NetworkTab {
 
     private static final Messages MSGS = GWT.create(Messages.class);
 
-    GwtSession session;
-    boolean dirty;
+    private final GwtSession session;
+    private final NetworkTabsUi tabs;
+    private boolean dirty;
     GwtModemInterfaceConfig selectedModemIfConfig;
     boolean formInitialized;
 
@@ -67,9 +68,10 @@ public class TabModemGpsUi extends Composite implements NetworkTab {
     @UiField
     HelpButton gpsHelp;
 
-    public TabModemGpsUi(GwtSession currentSession) {
+    public TabModemGpsUi(GwtSession currentSession, NetworkTabsUi tabs) {
         initWidget(uiBinder.createAndBindUi(this));
         this.session = currentSession;
+        this.tabs = tabs;
         initForm();
 
         this.gpsHelp.setHelpText(MSGS.netModemToolTipEnableGps());
@@ -78,6 +80,9 @@ public class TabModemGpsUi extends Composite implements NetworkTab {
     @Override
     public void setDirty(boolean flag) {
         this.dirty = flag;
+        if (this.tabs.getButtons() != null) {
+            this.tabs.getButtons().setApplyButtonDirty(flag);
+        }
     }
 
     @Override

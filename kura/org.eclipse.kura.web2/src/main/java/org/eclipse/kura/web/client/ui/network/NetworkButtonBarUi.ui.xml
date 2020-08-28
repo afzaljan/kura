@@ -32,11 +32,11 @@
         <b:Row>
             <b:Row>
                 <b:ButtonGroup justified="false" size="SMALL">
-                    <b:AnchorButton icon="CHECK"
+                    <b:Button icon="CHECK"
                         iconFixedWidth="true" ui:field="apply"
                         addStyleNames="{style.button}" b:id="btnNetworkApply"/>
 
-                    <b:AnchorButton icon="REFRESH"
+                    <b:Button icon="REFRESH"
                         iconFixedWidth="true" ui:field="refresh"
                         addStyleNames="{style.button}" b:id="btnNetworkRefresh"/>
 

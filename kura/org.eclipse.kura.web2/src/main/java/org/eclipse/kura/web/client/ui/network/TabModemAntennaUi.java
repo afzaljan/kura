@@ -36,7 +36,8 @@ public class TabModemAntennaUi extends Composite implements NetworkTab {
 
     private static final Messages MSGS = GWT.create(Messages.class);
 
-    GwtSession session;
+    private final GwtSession session;
+    private final NetworkTabsUi tabs;
     boolean dirty;
     GwtModemInterfaceConfig selectedModemIfConfig;
     boolean formInitialized;
@@ -62,9 +63,10 @@ public class TabModemAntennaUi extends Composite implements NetworkTab {
     @UiField
     HelpButton antennaHelp;
 
-    public TabModemAntennaUi(GwtSession currentSession) {
+    public TabModemAntennaUi(GwtSession currentSession, NetworkTabsUi tabs) {
         initWidget(uiBinder.createAndBindUi(this));
         this.session = currentSession;
+        this.tabs = tabs;
         initForm();
 
         this.antennaHelp.setHelpText(MSGS.netModemToolTipAntenna());
@@ -73,6 +75,9 @@ public class TabModemAntennaUi extends Composite implements NetworkTab {
     @Override
     public void setDirty(boolean flag) {
         this.dirty = flag;
+        if (this.tabs.getButtons() != null) {
+            this.tabs.getButtons().setApplyButtonDirty(flag);
+        }
     }
 
     @Override

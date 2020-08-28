@@ -26,7 +26,7 @@ import org.eclipse.kura.web.shared.service.GwtNetworkServiceAsync;
 import org.eclipse.kura.web.shared.service.GwtSecurityTokenService;
 import org.eclipse.kura.web.shared.service.GwtSecurityTokenServiceAsync;
 import org.gwtbootstrap3.client.ui.Alert;
-import org.gwtbootstrap3.client.ui.AnchorButton;
+import org.gwtbootstrap3.client.ui.Button;
 import org.gwtbootstrap3.client.ui.Modal;
 import org.gwtbootstrap3.client.ui.html.Text;
 
@@ -59,9 +59,9 @@ public class NetworkButtonBarUi extends Composite {
     NetworkTabsUi tabs;
 
     @UiField
-    AnchorButton apply;
+    Button apply;
     @UiField
-    AnchorButton refresh;
+    Button refresh;
 
     @UiField
     Modal incompleteFieldsModal;
@@ -80,14 +80,12 @@ public class NetworkButtonBarUi extends Composite {
     }
 
     private void initButtons() {
-
         initApplyButton();
         initRefreshButton();
+    }
 
-        this.table.interfacesGrid.getSelectionModel()
-                .addSelectionChangeHandler(event -> NetworkButtonBarUi.this.apply.setEnabled(true));
-
-        // TODO ?? how to detect changes
+    public void setApplyButtonDirty(boolean dirty) {
+        this.apply.setEnabled(dirty);
     }
 
     protected void initRefreshButton() {
@@ -104,6 +102,7 @@ public class NetworkButtonBarUi extends Composite {
     protected void initApplyButton() {
         // Apply Button
         this.apply.setText(MSGS.apply());
+        this.apply.setEnabled(false);
         this.apply.addClickHandler(event -> {
             if (!NetworkButtonBarUi.this.tabs.visibleTabs.isEmpty() && NetworkButtonBarUi.this.tabs.isValid()) {
                 GwtNetInterfaceConfig prevNetIf = NetworkButtonBarUi.this.table.selectionModel.getSelectedObject();

@@ -355,6 +355,9 @@ public class TabWirelessUi extends Composite implements NetworkTab {
     @Override
     public void setDirty(boolean flag) {
         this.dirty = flag;
+        if (this.netTabs.getButtons() != null) {
+            this.netTabs.getButtons().setApplyButtonDirty(flag);
+        }
     }
 
     @Override

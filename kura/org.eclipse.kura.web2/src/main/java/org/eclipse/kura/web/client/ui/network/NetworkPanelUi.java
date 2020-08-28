@@ -67,6 +67,7 @@ public class NetworkPanelUi extends Composite {
             this.buttonBar.add(buttons);
 
             this.tabs.setDirty(false);
+            this.tabs.setButtons(buttons);
             this.isInitialized = true;
         }
     }

@@ -68,6 +68,7 @@ public class NetworkTabsUi extends Composite {
     TabModemAntennaUi modemAntenna;
 
     GwtNetInterfaceConfig netIfConfig;
+    NetworkButtonBarUi buttons;
 
     GwtSession session;
 
@@ -81,6 +82,14 @@ public class NetworkTabsUi extends Composite {
         initWidget(uiBinder.createAndBindUi(this));
         this.session = session;
         initTabs();
+    }
+
+    public void setButtons(NetworkButtonBarUi buttons) {
+        this.buttons = buttons;
+    }
+
+    public NetworkButtonBarUi getButtons() {
+        return this.buttons;
     }
 
     public void setNetInterface(GwtNetInterfaceConfig selection) {
@@ -384,7 +393,7 @@ public class NetworkTabsUi extends Composite {
         // Modem
         this.modemTab = new AnchorListItem(MSGS.netModemCellular());
         this.visibleTabs.add(this.modemTab);
-        this.modem = new TabModemUi(this.session, this.tcpIp);
+        this.modem = new TabModemUi(this.session, this.tcpIp, this);
         this.modemTab.addClickHandler(event -> {
             setSelected(NetworkTabsUi.this.modemTab);
             NetworkTabsUi.this.selectedTab = NetworkTabsUi.this.modem;
@@ -396,7 +405,7 @@ public class NetworkTabsUi extends Composite {
         // Modem Gps
         this.modemGpsTab = new AnchorListItem(MSGS.netModemGps());
         this.visibleTabs.add(this.modemGpsTab);
-        this.modemGps = new TabModemGpsUi(this.session);
+        this.modemGps = new TabModemGpsUi(this.session, this);
         this.modemGpsTab.addClickHandler(event -> {
             setSelected(NetworkTabsUi.this.modemGpsTab);
             NetworkTabsUi.this.modemGps.refresh();  // TODO: to check if needed here or can be invoked elsewhere
@@ -409,7 +418,7 @@ public class NetworkTabsUi extends Composite {
         // Modem Antenna
         this.modemAntennaTab = new AnchorListItem(MSGS.netModemAntenna());
         this.visibleTabs.add(this.modemAntennaTab);
-        this.modemAntenna = new TabModemAntennaUi(this.session);
+        this.modemAntenna = new TabModemAntennaUi(this.session, this);
         this.modemAntennaTab.addClickHandler(event -> {
             setSelected(NetworkTabsUi.this.modemAntennaTab);
             NetworkTabsUi.this.modemAntenna.refresh();  // TODO: to check if needed here or can be invoked elsewhere
@@ -422,7 +431,7 @@ public class NetworkTabsUi extends Composite {
         // DHCP and NAT
         this.dhcpNatTab = new AnchorListItem(MSGS.netRouter());
         this.visibleTabs.add(this.dhcpNatTab);
-        this.dhcpNat = new TabDhcpNatUi(this.session, this.tcpIp, this.wireless);
+        this.dhcpNat = new TabDhcpNatUi(this.session, this.tcpIp, this.wireless, this);
         this.dhcpNatTab.addClickHandler(event -> {
             setSelected(NetworkTabsUi.this.dhcpNatTab);
             NetworkTabsUi.this.selectedTab = NetworkTabsUi.this.dhcpNat;
