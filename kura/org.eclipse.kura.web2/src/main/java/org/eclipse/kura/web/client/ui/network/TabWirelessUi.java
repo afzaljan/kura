@@ -734,6 +734,7 @@ public class TabWirelessUi extends Composite implements NetworkTab {
         this.wireless.addMouseOutHandler(event -> resetHelp());
 
         this.wireless.addChangeHandler(event -> {
+            setDirty(true);
             TabWirelessUi.this.helpWireless.setText("");
             TabWirelessUi.this.groupWireless.setValidationState(ValidationState.NONE);
 
@@ -790,6 +791,7 @@ public class TabWirelessUi extends Composite implements NetworkTab {
                 this.radio.addItem(MessageUtils.get(mode.name()));
             }
         }
+        this.radio.addChangeHandler(event -> setDirty(true));
 
         // Wireless Security
         this.labelSecurity.setText(MSGS.netWifiWirelessSecurity());
@@ -804,6 +806,7 @@ public class TabWirelessUi extends Composite implements NetworkTab {
             this.security.addItem(MessageUtils.get(mode.name()));
         }
         this.security.addChangeHandler(event -> {
+            setDirty(true);
             setPasswordValidation();
             refreshForm();
             checkPassword();
@@ -918,7 +921,10 @@ public class TabWirelessUi extends Composite implements NetworkTab {
             }
             this.group.addItem(MessageUtils.get(cipher.name()));
         }
-        this.group.addChangeHandler(event -> refreshForm());
+        this.group.addChangeHandler(event -> {
+            setDirty(true);
+            refreshForm();
+        });
 
         // Bgscan module
         this.labelBgscan.setText(MSGS.netWifiWirelessBgscanModule());
@@ -932,7 +938,10 @@ public class TabWirelessUi extends Composite implements NetworkTab {
         for (GwtWifiBgscanModule module : GwtWifiBgscanModule.values()) {
             this.bgscan.addItem(MessageUtils.get(module.name()));
         }
-        this.bgscan.addChangeHandler(event -> refreshForm());
+        this.bgscan.addChangeHandler(event -> {
+            setDirty(true);
+            refreshForm();
+        });
 
         // BgScan RSSI threshold
         this.labelRssi.setText(MSGS.netWifiWirelessBgscanSignalStrengthThreshold());
