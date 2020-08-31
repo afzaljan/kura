@@ -87,6 +87,7 @@ import com.google.gwt.view.client.SingleSelectionModel;
 
 public class TabWirelessUi extends Composite implements NetworkTab {
 
+    private static final String STATUS_TABLE_ROW = "status-table-row";
     private static final String NET_WIFI_WIRELESS_MODE_STATION = "netWifiWirelessModeStation";
     private static final String WIFI_MODE_STATION = GwtWifiWirelessMode.netWifiWirelessModeStation.name();
     private static final String WIFI_MODE_STATION_MESSAGE = MessageUtils.get(WIFI_MODE_STATION);
@@ -120,8 +121,8 @@ public class TabWirelessUi extends Composite implements NetworkTab {
     private final GwtNetworkServiceAsync gwtNetworkService = GWT.create(GwtNetworkService.class);
     private final GwtDeviceServiceAsync gwtDeviceService = GWT.create(GwtDeviceService.class);
 
-    private static final String REGEX_PASSWORD_WPA = "^[ -~]{8,63}$";
-    private static final String REGEX_PASSWORD_WEP = "^(?:[\\x00-\\x7F]{5}|[\\x00-\\x7F]{13}|[a-fA-F0-9]{10}|[a-fA-F0-9]{26})$";
+    private static final String REGEX_PASS_WPA = "^[ -~]{8,63}$";
+    private static final String REGEX_PASS_WEP = "^(?:[\\x00-\\x7F]{5}|[\\x00-\\x7F]{13}|[a-fA-F0-9]{10}|[a-fA-F0-9]{26})$";
     private static final int MAX_WIFI_CHANNEL = 14;
     private static final int MAX_SSID_LENGTH = 32;
 
@@ -139,6 +140,7 @@ public class TabWirelessUi extends Composite implements NetworkTab {
     private String tcpStatus;
 
     GwtWifiConfig activeConfig;
+    GwtWifiChannelModel previousSelection;
 
     @UiField
     CellTable<GwtWifiChannelModel> channelGrid = new CellTable<>();
@@ -312,6 +314,7 @@ public class TabWirelessUi extends Composite implements NetworkTab {
         initForm();
         initHelpButtons();
         setPasswordValidation();
+        previousSelection = new GwtWifiChannelModel("", 0, 0, "");
 
         this.tcpTab.status.addChangeHandler(event -> {
             if (TabWirelessUi.this.selectedNetIfConfig != null) {
@@ -441,6 +444,7 @@ public class TabWirelessUi extends Composite implements NetworkTab {
         setValues();
         refreshForm();
         setPasswordValidation();
+        previousSelection = new GwtWifiChannelModel("", 0, 0, "");
     }
 
     private void setValues() {
@@ -904,7 +908,10 @@ public class TabWirelessUi extends Composite implements NetworkTab {
             }
             this.pairwise.addItem(MessageUtils.get(cipher.name()));
         }
-        this.pairwise.addChangeHandler(event -> refreshForm());
+        this.pairwise.addChangeHandler(event -> {
+            setDirty(true);
+            refreshForm();
+        });
 
         // Groupwise Ciphers
         this.labelGroup.setText(MSGS.netWifiWirelessGroupCiphers());
@@ -986,6 +993,7 @@ public class TabWirelessUi extends Composite implements NetworkTab {
             }
         });
         this.radio1.addMouseOutHandler(event -> resetHelp());
+        this.radio1.addChangeHandler(event -> setDirty(true));
         this.radio2.setText(MSGS.falseLabel());
         this.radio2.addMouseOverHandler(event -> {
             if (TabWirelessUi.this.radio2.isEnabled()) {
@@ -994,6 +1002,7 @@ public class TabWirelessUi extends Composite implements NetworkTab {
             }
         });
         this.radio2.addMouseOutHandler(event -> resetHelp());
+        this.radio2.addChangeHandler(event -> setDirty(true));
 
         // Ignore Broadcast SSID
         this.labelIgnore.setText(MSGS.netWifiWirelessIgnoreSSID());
@@ -1005,6 +1014,7 @@ public class TabWirelessUi extends Composite implements NetworkTab {
             }
         });
         this.radio3.addMouseOutHandler(event -> resetHelp());
+        this.radio3.addChangeHandler(event -> setDirty(true));
         this.radio4.setText(MSGS.falseLabel());
         this.radio4.addMouseOverHandler(event -> {
             if (TabWirelessUi.this.radio4.isEnabled()) {
@@ -1013,6 +1023,7 @@ public class TabWirelessUi extends Composite implements NetworkTab {
             }
         });
         this.radio4.addMouseOutHandler(event -> resetHelp());
+        this.radio4.addChangeHandler(event -> setDirty(true));
 
         // Channel Grid
         initGrid();
@@ -1072,7 +1083,7 @@ public class TabWirelessUi extends Composite implements NetworkTab {
             TabWirelessUi.this.channelDataProvider.refresh();
         });
 
-        checkColumn.setCellStyleNames("status-table-row");
+        checkColumn.setCellStyleNames(STATUS_TABLE_ROW);
         this.channelGrid.addColumn(checkColumn);
 
         // ALL AVAILABLE CHANNELS
@@ -1083,7 +1094,7 @@ public class TabWirelessUi extends Composite implements NetworkTab {
                 return object.getName();
             }
         };
-        col1.setCellStyleNames("status-table-row");
+        col1.setCellStyleNames(STATUS_TABLE_ROW);
         this.channelGrid.addColumn(col1, "All Available Channels");
 
         // FREQUENCY
@@ -1094,7 +1105,7 @@ public class TabWirelessUi extends Composite implements NetworkTab {
                 return String.valueOf(object.getFrequency());
             }
         };
-        col2.setCellStyleNames("status-table-row");
+        col2.setCellStyleNames(STATUS_TABLE_ROW);
         this.channelGrid.addColumn(col2, "Frequency (MHz)");
 
         // SPECTRUM BAND
@@ -1105,9 +1116,19 @@ public class TabWirelessUi extends Composite implements NetworkTab {
                 return String.valueOf(object.getBand());
             }
         };
-        col3.setCellStyleNames("status-table-row");
+        col3.setCellStyleNames(STATUS_TABLE_ROW);
         this.channelGrid.addColumn(col3, "Frequency (MHz)");
 
+        this.selectionModel.addSelectionChangeHandler(event -> {
+            GwtWifiChannelModel currentSelection = this.selectionModel.getSelectedObject();
+            if (currentSelection == null || (previousSelection != null && previousSelection.getName().isEmpty())
+                    || currentSelection.equals(this.previousSelection)) {
+                setDirty(false);
+            } else {
+                setDirty(true);
+            }
+            this.previousSelection = currentSelection;
+        });
         this.channelGrid.setSelectionModel(this.selectionModel);
         this.channelDataProvider.addDataDisplay(this.channelGrid);
 
@@ -1191,18 +1212,16 @@ public class TabWirelessUi extends Composite implements NetworkTab {
 
             this.password.setValidatorsFrom(configUserOptions);
             configUserOptions.setPasswordMinimumLength(Math.min(configUserOptions.getPasswordMinimumLength(), 63));
-            this.password
-                    .addValidator(new RegexValidator(REGEX_PASSWORD_WPA, MSGS.netWifiWirelessInvalidWPAPassword()) {
-                    });
+            this.password.addValidator(new RegexValidator(REGEX_PASS_WPA, MSGS.netWifiWirelessInvalidWPAPassword()) {
+            });
 
         } else if (this.security.getSelectedItemText().equals(WIFI_SECURITY_WEP_MESSAGE)) {
 
             configUserOptions.setPasswordRequireSpecialChars(false);
             configUserOptions.setPasswordMinimumLength(Math.min(configUserOptions.getPasswordMinimumLength(), 26));
             this.password.setValidatorsFrom(configUserOptions);
-            this.password
-                    .addValidator(new RegexValidator(REGEX_PASSWORD_WEP, MSGS.netWifiWirelessInvalidWEPPassword()) {
-                    });
+            this.password.addValidator(new RegexValidator(REGEX_PASS_WEP, MSGS.netWifiWirelessInvalidWEPPassword()) {
+            });
 
         } else {
             configUserOptions.allowAnyPassword();
@@ -1231,7 +1250,7 @@ public class TabWirelessUi extends Composite implements NetworkTab {
                 return object.getSSID();
             }
         };
-        col1.setCellStyleNames("status-table-row");
+        col1.setCellStyleNames(STATUS_TABLE_ROW);
         this.ssidGrid.addColumn(col1, "SSID");
         this.ssidGrid.setColumnWidth(col1, "240px");
 
@@ -1242,7 +1261,7 @@ public class TabWirelessUi extends Composite implements NetworkTab {
                 return object.getMacAddress();
             }
         };
-        col2.setCellStyleNames("status-table-row");
+        col2.setCellStyleNames(STATUS_TABLE_ROW);
         this.ssidGrid.addColumn(col2, "MAC Address");
         this.ssidGrid.setColumnWidth(col2, "140px");
 
@@ -1253,7 +1272,7 @@ public class TabWirelessUi extends Composite implements NetworkTab {
                 return String.valueOf(object.getSignalStrength());
             }
         };
-        col3.setCellStyleNames("status-table-row");
+        col3.setCellStyleNames(STATUS_TABLE_ROW);
         this.ssidGrid.addColumn(col3, "Signal Strength (dBm)");
         this.ssidGrid.setColumnWidth(col3, "70px");
 
@@ -1264,7 +1283,7 @@ public class TabWirelessUi extends Composite implements NetworkTab {
                 return String.valueOf(object.getChannel());
             }
         };
-        col4.setCellStyleNames("status-table-row");
+        col4.setCellStyleNames(STATUS_TABLE_ROW);
         this.ssidGrid.addColumn(col4, "Channel");
         this.ssidGrid.setColumnWidth(col4, "70px");
 
@@ -1275,7 +1294,7 @@ public class TabWirelessUi extends Composite implements NetworkTab {
                 return String.valueOf(object.getFrequency());
             }
         };
-        col5.setCellStyleNames("status-table-row");
+        col5.setCellStyleNames(STATUS_TABLE_ROW);
         this.ssidGrid.addColumn(col5, "Frequency");
         this.ssidGrid.setColumnWidth(col5, "70px");
 
@@ -1286,7 +1305,7 @@ public class TabWirelessUi extends Composite implements NetworkTab {
                 return object.getSecurity();
             }
         };
-        col6.setCellStyleNames("status-table-row");
+        col6.setCellStyleNames(STATUS_TABLE_ROW);
         this.ssidGrid.addColumn(col6, "Security");
         this.ssidGrid.setColumnWidth(col6, "70px");
         this.ssidDataProvider.addDataDisplay(this.ssidGrid);
@@ -1543,4 +1562,5 @@ public class TabWirelessUi extends Composite implements NetworkTab {
         confirm.add(confirmFooter);
         confirm.show();
     }
+
 }
