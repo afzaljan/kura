@@ -259,12 +259,8 @@ public class NetworkTabsUi extends Composite {
             }
         }
 
-        if (includeDhcpNat) {
-            // enable dhcp/nat tab
-            this.dhcpNatTab.setEnabled(true);
-        } else {
-            this.dhcpNatTab.setEnabled(false);
-        }
+        // enable dhcp/nat tab
+        this.dhcpNatTab.setEnabled(includeDhcpNat);
 
         if (netIfStatus.equals(IPV4_STATUS_DISABLED_MESSAGE) || netIfStatus.equals(IPV4_STATUS_UNMANAGED_MESSAGE)) {
             // disabled - remove tabs
@@ -272,17 +268,9 @@ public class NetworkTabsUi extends Composite {
         }
 
         if (this.netIfConfig instanceof GwtModemInterfaceConfig) {
-            if (((GwtModemInterfaceConfig) this.netIfConfig).isGpsSupported()
-                    && !netIfStatus.equals(IPV4_STATUS_UNMANAGED_MESSAGE)) {
-                this.modemGpsTab.setEnabled(true);
-            } else {
-                this.modemGpsTab.setEnabled(false);
-            }
-            if (isModemLTE()) {
-                this.modemAntennaTab.setEnabled(true);
-            } else {
-                this.modemAntennaTab.setEnabled(false);
-            }
+            this.modemGpsTab.setEnabled(((GwtModemInterfaceConfig) this.netIfConfig).isGpsSupported()
+                    && !netIfStatus.equals(IPV4_STATUS_UNMANAGED_MESSAGE));
+            this.modemAntennaTab.setEnabled(isModemLTE());
         }
     }
 

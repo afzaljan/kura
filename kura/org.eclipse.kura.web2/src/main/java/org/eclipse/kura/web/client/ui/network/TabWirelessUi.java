@@ -72,6 +72,7 @@ import com.google.gwt.dom.client.Document;
 import com.google.gwt.editor.client.Editor;
 import com.google.gwt.editor.client.EditorError;
 import com.google.gwt.event.dom.client.BlurEvent;
+import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.DomEvent;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
@@ -336,6 +337,11 @@ public class TabWirelessUi extends Composite implements NetworkTab {
 
     @UiHandler(value = { "wireless", "ssid", "radio", "security", "password", "verify", "pairwise", "group", "bgscan",
             "longI", "shortI", "radio1", "radio2", "radio3", "radio4", "rssi" })
+    public void onChange(ChangeEvent e) {
+        setDirty(true);
+    }
+
+    @UiHandler(value = { "wireless" })
     public void onFormBlur(BlurEvent e) {
         setDirty(true);
     }
@@ -1562,5 +1568,4 @@ public class TabWirelessUi extends Composite implements NetworkTab {
         confirm.add(confirmFooter);
         confirm.show();
     }
-
 }
