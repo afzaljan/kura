@@ -396,7 +396,6 @@ public class NetworkTabsUi extends Composite {
         this.modemGps = new TabModemGpsUi(this.session, this);
         this.modemGpsTab.addClickHandler(event -> {
             setSelected(NetworkTabsUi.this.modemGpsTab);
-            NetworkTabsUi.this.modemGps.refresh();  // TODO: to check if needed here or can be invoked elsewhere
             NetworkTabsUi.this.selectedTab = NetworkTabsUi.this.modemGps;
             NetworkTabsUi.this.content.clear();
             NetworkTabsUi.this.content.add(NetworkTabsUi.this.modemGps);
@@ -409,7 +408,6 @@ public class NetworkTabsUi extends Composite {
         this.modemAntenna = new TabModemAntennaUi(this.session, this);
         this.modemAntennaTab.addClickHandler(event -> {
             setSelected(NetworkTabsUi.this.modemAntennaTab);
-            NetworkTabsUi.this.modemAntenna.refresh();  // TODO: to check if needed here or can be invoked elsewhere
             NetworkTabsUi.this.selectedTab = NetworkTabsUi.this.modemAntenna;
             NetworkTabsUi.this.content.clear();
             NetworkTabsUi.this.content.add(NetworkTabsUi.this.modemAntenna);
