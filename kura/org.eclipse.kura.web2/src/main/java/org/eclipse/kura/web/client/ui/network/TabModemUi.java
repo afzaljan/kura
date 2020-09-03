@@ -339,7 +339,6 @@ public class TabModemUi extends Composite implements NetworkTab {
 
     @Override
     public void refresh() {
-        log("IS DIRTY? " + isDirty());
         if (isDirty()) {
             setDirty(false);
             resetValidations();
@@ -780,9 +779,7 @@ public class TabModemUi extends Composite implements NetworkTab {
     }
 
     private void update() {
-        log("UPDATE");
         if (this.selectedNetIfConfig != null) {
-            log("config is not null");
             this.model.setText(this.selectedNetIfConfig.getManufacturer() + "-" + this.selectedNetIfConfig.getModel());
             this.network.clear();
             List<String> networkTechnologies = this.selectedNetIfConfig.getNetworkTechnology();
@@ -831,7 +828,6 @@ public class TabModemUi extends Composite implements NetworkTab {
     }
 
     private void refreshForm() {
-        log("REFRESHFORM");
         this.network.setEnabled(true);
         this.modem.setEnabled(true);
         this.number.setEnabled(true);
@@ -874,7 +870,6 @@ public class TabModemUi extends Composite implements NetworkTab {
     }
 
     private void reset() {
-        log("RESET");
         this.model.setText(null);
         this.network.setSelectedIndex(0);
         this.service.setText(null);
@@ -1018,27 +1013,4 @@ public class TabModemUi extends Composite implements NetworkTab {
         });
     }
 
-    private void log(String message) {
-        this.gwtXSRFService.generateSecurityToken(new AsyncCallback<GwtXSRFToken>() {
-
-            @Override
-            public void onFailure(Throwable ex) {
-            }
-
-            @Override
-            public void onSuccess(GwtXSRFToken token) {
-                TabModemUi.this.gwtNetworkService.log(message, new AsyncCallback<Void>() {
-
-                    @Override
-                    public void onFailure(Throwable caught) {
-                    }
-
-                    @Override
-                    public void onSuccess(Void result) {
-                    }
-                });
-            }
-
-        });
-    }
 }
