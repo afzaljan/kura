@@ -144,8 +144,8 @@ public class TabModemAntennaUi extends Composite implements NetworkTab {
             }
         });
         this.radio1.addMouseOutHandler(event -> resetHelp());
-        this.radio2.addValueChangeHandler(event -> TabModemAntennaUi.this.dirty = true);
-        this.radio1.addValueChangeHandler(event -> TabModemAntennaUi.this.dirty = true);
+        this.radio2.addValueChangeHandler(event -> setDirty(true));
+        this.radio1.addValueChangeHandler(event -> setDirty(true));
 
         this.helpTitle.setText(MSGS.netHelpTitle());
         this.radio2.setText(MSGS.falseLabel());
