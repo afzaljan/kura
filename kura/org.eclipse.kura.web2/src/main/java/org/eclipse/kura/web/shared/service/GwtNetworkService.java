@@ -60,4 +60,6 @@ public interface GwtNetworkService extends RemoteService {
 
     public List<GwtModemPdpEntry> findPdpContextInfo(GwtXSRFToken xsrfToken, String interfaceName)
             throws GwtKuraException;
+
+    public void log(String message);
 }

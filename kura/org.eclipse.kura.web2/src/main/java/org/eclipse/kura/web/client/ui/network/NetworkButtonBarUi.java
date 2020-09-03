@@ -93,9 +93,6 @@ public class NetworkButtonBarUi extends Composite {
         this.refresh.setText(MSGS.refresh());
         this.refresh.addClickHandler(event -> {
             NetworkButtonBarUi.this.table.refresh();
-            NetworkButtonBarUi.this.tabs.setDirty(false);
-            NetworkButtonBarUi.this.tabs.refresh();
-            NetworkButtonBarUi.this.tabs.adjustInterfaceTabs();
         });
     }
 
@@ -119,7 +116,7 @@ public class NetworkButtonBarUi extends Composite {
                         newNetwork = calculateNetwork(updatedNetIf.getIpAddress(), updatedNetIf.getSubnetMask());
                         prevNetwork = calculateNetwork(Window.Location.getHost(), updatedNetIf.getSubnetMask());
                     } catch (Exception e) {
-
+                        // Do nothing
                     }
 
                     scheduleRefresh(prevNetIf, updatedNetIf, newNetwork, prevNetwork);

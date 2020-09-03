@@ -111,6 +111,11 @@ public class GwtNetworkServiceImpl extends OsgiRemoteServiceServlet implements G
     private static final Logger logger = LoggerFactory.getLogger(GwtNetworkServiceImpl.class);
 
     @Override
+    public void log(String message) {
+        logger.info(message);
+    }
+
+    @Override
     public List<GwtNetInterfaceConfig> findNetInterfaceConfigurations() throws GwtKuraException {
         List<GwtNetInterfaceConfig> result = privateFindNetInterfaceConfigurations();
 
