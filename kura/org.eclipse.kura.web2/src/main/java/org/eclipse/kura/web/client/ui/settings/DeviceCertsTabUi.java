@@ -104,7 +104,7 @@ public class DeviceCertsTabUi extends Composite implements Tab {
 
     @Override
     public boolean isValid() {
-        return deviceSslCertsForm.validate();
+        return this.deviceSslCertsForm.validate();
     }
 
     @Override
@@ -126,6 +126,8 @@ public class DeviceCertsTabUi extends Composite implements Tab {
         this.groupStorageAliasForm.setValidationState(ValidationState.NONE);
         this.groupPrivateKeyForm.setValidationState(ValidationState.NONE);
         this.groupCertForm.setValidationState(ValidationState.NONE);
+        this.deviceSslCertsForm.reset();
+        setButtonsEnabled(false);
     }
 
     private void initForm() {
@@ -235,6 +237,7 @@ public class DeviceCertsTabUi extends Composite implements Tab {
                 this.groupStorageAliasForm.setValidationState(ValidationState.NONE);
                 this.groupPrivateKeyForm.setValidationState(ValidationState.NONE);
                 this.groupCertForm.setValidationState(ValidationState.NONE);
+                this.deviceSslCertsForm.reset();
                 setDirty(false);
             });
             group.add(yes);
